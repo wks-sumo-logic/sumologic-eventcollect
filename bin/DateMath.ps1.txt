@@ -1,0 +1,2 @@
+$adjustment=$args[0]
+(get-date).AddDays($adjustment).ToString("yyyyMMdd")

@@ -1,0 +1,36 @@
+::
+@echo on
+::
+setlocal enabledelayedexpansion
+::
+set configfile=D:\sumologic\wmic-server-loop-batch.csv
+::
+FOR /F "tokens=1,* delims==," %%i IN (%configfile%) DO ( 
+
+	set datemath=D:\sumologic\DateMath.ps1
+	for /F "tokens=* USEBACKQ" %%F IN (`powershell -NoProfile -ExecutionPolicy Bypass -f !datemath! -1`) DO ( set datestamp=%%F)
+	set datestamp=!datestamp: =!
+	set remainder=.000000+540
+	
+	set hour=%TIME:~0,2%
+	if !hour! LSS 10 set hour=0!hour!
+	set timestamp=!hour!0000
+		
+	set wmicdatestamp='!datestamp!!timestamp!!remainder!'
+	set wmicdatestamp=!wmicdatestamp: =!
+
+	set outputdir=E:\sumologic\logfiles
+	set outputfile=!outputdir!\%%i.!datestamp!.csv
+	if not exist !outputdir! ( md !outputdir! )
+
+	set convertdir=E:\sumologic\converted
+	set convertedfile=!convertdir!\%%i.!datestamp!-UTF8.csv
+	if not exist !convertdir! ( md !convertdir! )
+		
+	wmic /node:%%i ntevent where "(timegenerated >= !wmicdatestamp!)" list /format:CSV > !outputfile!
+
+	set convertutf=D:\sumologic\Convert2UTF8.ps1
+	powershell -NoProfile -ExecutionPolicy Bypass -f !convertutf! !outputfile! !convertedfile!
+
+)
+::

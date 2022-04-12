@@ -1,0 +1,3 @@
+$srcfile=$args[0]
+$dstfile=$args[1]
+(Get-Content -path $srcfile ) | Set-Content -Encoding UTF8 -Path $dstfile
