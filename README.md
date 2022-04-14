@@ -1,5 +1,5 @@
-sumologic-eventcollect
-======================
+sumologic-winlogscoop
+=====================
 
 Sometimes we need to work with ingesting logs from legacy systems, 
 where Open Telemetry, Syslog, WEC, or even an install collector is not an option.
